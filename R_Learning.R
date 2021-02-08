@@ -173,4 +173,3 @@ ggplot(ARIK_final, aes(x = new_dates, y = specificConductance))+
   labs(title = "ARIK Specific Conductance", subtitle = "5 Years of Data", x = "Date", y = "Specific Conductance")+
   scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
 #pretty consistent pattern with conductance- slightly higher in hot winter months where decreased water levels concentrate solutes
-

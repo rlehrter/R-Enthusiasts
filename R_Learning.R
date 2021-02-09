@@ -2,6 +2,10 @@
 #Mostly by RJL
 #Partially stolen from R group 44
 
+##### Preface - Basic Basics #####
+# control enter will run the line of code your cursor is on, or whatever script is highlighted
+# you can also click run in the top right of this box
+# denotes a comment, which causes R to ignore everything to the right of it
 
 ################### Part 1: R Basics #######################
 
@@ -10,10 +14,6 @@
 # Console
 # Environment
 # Plots, packages, help window
-
-# Btw, a # denotes a comment, which causes R to ignore everything to the right of it
-# Use it to make notes
-#########################################
 
 
 ########## (2) Basic Operations ##########
@@ -29,22 +29,21 @@ B <- 12
 
 #Now you can do math with them
 B-a
-#########################################
 
 
-##### (3) Data Classes and Structures #####
+########## (3) Data Classes and Structures ##########
 #Important to know when working with NEON data and the API!
 
 ### Common Classes
 # Character (abc)
 # Numeric (123)
 # Logical (TRUE, FALSE)
-# Date and Time (POSIXct)
+# Date and Time (called "POSIXct")
 
 # R is relatively smart and automatically assigns a data class to imported values
 # But it doesn't always get it right, or maybe you want to change class for a specific reason 
+# Fortunately there are "as." functions to change data class
 
-##### Fortunately there are functions to change data class #####
 # Examine the structure using str() or just the class using class() of variable "a"
 str(a)
 class(a)
@@ -64,19 +63,18 @@ class(a)
 
 ##### (4) Basic R Operators #####
 # <- assignment operator
-# == <- equals
-# != <- does not equal
-# : <- selects everything between two values
-# $ <- subset (we'll use this with NEON API data soon)
+# == equals
+# != does not equal
+# : selects everything between two values
+# $ subset (we'll use this with NEON API data soon)
 
 5 == 5
-5 != 5
+5 != 5 # Logical expressions like these can and will be used within many functions!
 1:10
 c <- 1:100
 c
 str(c)
-
-# These logical expressions can and will be used within many functions!
+########################################################
 
 
 ##### Part 2: API and Basic Plotting Tutorial #####
@@ -85,24 +83,23 @@ str(c)
 # You can change it to work with any NEON data product
 
 
+############# (1) Install and Load Packages, Set Working Directory ################
 # First load all needed packages to your library to make them "accessible" or install.packages() if needed
 # BTW a packages is just a bundle of functions that have been developed for specific purposes
 
-library("neonUtilities")
-library("dplyr")
-library("tidyverse")
-library("ggplot2")
-library("scales")
-
-# neonUtilities has functions to pull and manipulate NEON data, specifically
-# dplyr is a fantastic data manipulation tool
-# ggplot2 is a much better alternative to the base R plotting/graphing functions
+library("neonUtilities") #has functions to pull and manipulate NEON data, including functions for the API
+#API - (Application Programming Interface) essentially how R "talks" to the data portal
+library("tidyverse") #a collection of multiple packages that include most of the functions you will need including:
+#library("dplyr") #fantastic data manipulation tool
+#library("ggplot2") #a much better alternative to the base R plotting/graphing functions
+library("scales") #package I like for manipulating axes, breaks, labels and legends
 
 # Determine the folder to which you want to save files, your working directory
 # Right click folder, copy address as text, put "" around it, and change all \ to /
 setwd("C:/Users/rlehrter/Desktop/R Working Directory")
 
-### Now onto getting data! ###
+
+############# (2) Get Your Awesome NEON Data Using the API ################
 # Choose the site for which you want to determine ranges by assigning the name to variable "site"
 # Must have "" around the text, otherwise R assumes this 4 letter code is a variable in the environment
 site <- "ARIK"
@@ -124,20 +121,22 @@ str(swc)
 View(swc)
 # So, NEON data comes as a list of 8 different tables, 7 of which we won't need.
 
+
+############# (3) Manipulate and Organize Your Data ##############
 # After looking at the contents of each it looks like We'll need only one of these, the swc_fieldSuperParent
 # Let's subset swc to only what we need using the operator $
 ARIK_field_data <- swc$swc_fieldSuperParent
 str(ARIK_field_data)
 View(ARIK_field_data)
 
-###################################
+###########################################################
 #### Alternatively you can just use this "for loop" :) ####
 #### GREAT CHUNK OF CODE FOR UNPACKING ENTIRE LIST ####
 # Unpack data frames to work with data tables individually
 for(i in 1:length(swc)) {
   assign(names(swc)[i], swc[[i]])
 }
-###################################
+###########################################################
 
 # Let's make the table more manageable by removing all variables we don't need, then all observations (rows) that have a missing value, or "NA" 
 ARIK_field_data_cut <- ARIK_field_data %>%
@@ -173,3 +172,5 @@ ggplot(ARIK_final, aes(x = new_dates, y = specificConductance))+
   labs(title = "ARIK Specific Conductance", subtitle = "5 Years of Data", x = "Date", y = "Specific Conductance")+
   scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
 #pretty consistent pattern with conductance- slightly higher in hot winter months where decreased water levels concentrate solutes
+
+#That's it! Try changing the data product ID in the API and creating your own plot using different data

@@ -45,16 +45,16 @@ B-a
 # Fortunately there are "as." functions to change data class
 
 # Examine the structure using str() or just the class using class() of variable "a"
-str(a)
-class(a)
+str(B)
+class(B)
 
 # as.[insert class here] will allow you to change data to a new class
 # the assignment operator (<-) here is "writing over" the old variable "a" with the newly assigned value
-a <- as.logical(a)
+b <- as.logical(B)
 
 # look again at the structure or class of that variable
-str(a)
-class(a)
+str(b)
+class(b)
 
 ### Common Data Structures
 #Vector - 1 dimension dataset, every element is the same data type

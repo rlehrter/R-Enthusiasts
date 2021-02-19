@@ -16,7 +16,7 @@ ltr <- loadByProduct(
   dpID = "DP1.10033.001",
   check.size = F, #remove the 'are yOu sURe YoU WaNt to DOwnLOad tHis DAta' message
   site = "RMNP",
-  startdate = "20160101"
+  startdate = "2016-01" #date only worked for me in YYYY-MM format
 )
 
 View(ltr)
@@ -32,7 +32,7 @@ ltr.semifinal <- filter(ltr.clean, qaDryMass!= "Y")
 View(ltr.semifinal)
 
 #remove the QA column now that its no longer useful
-ltr.final <- ltr.semifinal %>% select(trapID, collectDate,functionalGroup, dryMass)
+ltr.final <- ltr.semifinal %>% select(-qaDryMass) #can use -variable to just remove your chosen column
 View(ltr.final)
 
 ##subset to just look at needle masses
@@ -44,8 +44,19 @@ ggplot(ltr.needles, aes(x= collectDate, y= dryMass))+
   
 
 ##Want to average litter mass across traps
-ltr.needles.avg <- ltr.needles %>% group_by(collectDate) %>% summarise(mean(dryMass))
+ltr.needles.avg <- ltr.needles %>% 
+  group_by(trapID) %>% 
+  mutate(meanDryMass = mean(dryMass)) #instead I switched to the mutate function, where I name to new column 
+#meanDryMass on the left, and run the function mean() on the column dryMass on the right
+#generally a bad idea to have () in your variable names if you can avoid it!
 View(ltr.needles.avg)
+
+#few basic plots
+ggplot(ltr.needles.avg, aes(trapID, meanDryMass))+
+  geom_point()
+
+ggplot(ltr.needles.avg, aes(meanDryMass))+
+  geom_boxplot()
 
 ##want to graph that but cant figure out how
 ##the column name is mean(dryMass), but when I try to use that, ggplot thinks I'm using the function 'mean' 
@@ -59,7 +70,3 @@ View(ltr.foliage)
 
 ggplot(ltr.foliage, aes(x = collectDate, y = dryMass))+
   geom_point(aes(color=factor(functionalGroup)))
-             
-
-
-

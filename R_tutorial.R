@@ -18,12 +18,15 @@
 
 ########## (2) Basic Operations ##########
 # R is basically a fancy calculator
-12+5
+12+5 #adding
+2-3
 40/8
+5*5
 
 # You can also assign numbers to letters, or "objects"
 a <- 1
 B <- 12
+B <- 1
 # Note these are stored in your environment window
 # Also, R doesn't allow spaces in assigned names and IS caps sensitive
 
@@ -174,3 +177,7 @@ ggplot(ARIK_final, aes(x = new_dates, y = specificConductance))+
 #pretty consistent pattern with conductance- slightly higher in hot winter months where decreased water levels concentrate solutes
 
 #That's it! Try changing the data product ID in the API and creating your own plot using different data
+install.packages("swirl")
+library("swirl")
+swirl()
+

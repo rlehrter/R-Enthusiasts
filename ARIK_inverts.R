@@ -35,7 +35,7 @@ boxplot(ARIK_tax_cut$family~ARIK_tax_cut$estimatedTotalCount, main="ARIK Taxonom
 #I wanted to flip the x axis text so I could actually read it
 graph <- ggplot(ARIK_tax_cut, aes(x=family, y=estimatedTotalCount)) + geom_bar(stat="identity", fill="steelblue")
 
-graph + theme(axis.text.x = element_text(face = "bold", size = 12, angle = 90)) + scale_y_log10()
+graph + theme(axis.text.x = element_text(face = "bold", size = 12, angle = 90))
 
 #ok I flipped it, but I still can't read it. I think I need to space them out more
 

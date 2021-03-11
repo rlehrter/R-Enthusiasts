@@ -11,6 +11,7 @@ library("neonUtilities")
 library("tidyr")
 library("scales")
 library("ggthemes")
+library("dplyr")
 
 
 ###Get your data, this time for water chemistry as usual
@@ -29,7 +30,7 @@ swc <- neonUtilities::loadByProduct(
 
 #Select only the field data from the list of tables
 aqua_field_data <- swc$swc_fieldSuperParent
-str(aqua_field_data)
+View(aqua_field_data)
 
 #drop unecessary variables, this time keep the siteID
 aqua_final <- aqua_field_data %>%
@@ -56,18 +57,18 @@ ggplot(
   aqua_final,
   aes(x = collectDate, y = waterTemp, shape = siteID))+
   geom_point()
-)
+
 #Not a great way to visualize this data, but it's an option!
 
 ggplot(
   aqua_final,
   aes(x = collectDate, y = waterTemp, color = siteID))+
   geom_point()
-)
+
 #R automatically assigns colors to your variables
 
 #Other geometries can display information in other ways
-#geom_smooth() will draw a bline of best fit using the "loess" method (non-parametric) as the default
+#geom_smooth() will draw a line of best fit using the "loess" method (non-parametric) as the default
 
 ggplot(
   aqua_final,

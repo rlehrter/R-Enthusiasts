@@ -89,3 +89,6 @@ NIWO_windrose <- NIWO_windrose_dirty +
 print(NIWO_windrose)
 
 NIWO_windrose
+
+#y-axis log10 transformation#
+NIWO_windrose + scale_y_log10()

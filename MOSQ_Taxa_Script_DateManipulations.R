@@ -9,12 +9,15 @@ MOSQ_2016_2020<-loadByProduct(dpID='DP1.10043.001', site =c("NIWO","RMNP","CPER"
 y
 View(MOSQ_2016_2020)
 View(MOSQ_2016_2020$mos_expertTaxonomistIDProcessed)
-write.csv(MOSQ_2016_2020$mos_expertTaxonomistIDProcessed, file = 'MOSQ_taxon_D10.13_2016_2020.csv')
 
+#####Removing the exporting as .csv and importing as this screwed up the data file#####
+#write.csv(MOSQ_2016_2020$mos_expertTaxonomistIDProcessed, file = 'MOSQ_taxon_D10.13_2016_2020.csv')
+#mosq_taxa<-read.csv("C:/Users/mccahill/Documents/GitHub/Mosquito.data/MOSQ_taxon_D10.13_2016_2020.csv")
+#####
 
 #####start here##################
 
-mosq_taxa<-read.csv("C:/Users/mccahill/Documents/GitHub/Mosquito.data/MOSQ_taxon_D10.13_2016_2020.csv")
+mosq_taxa <- MOSQ_2016_2020$mos_expertTaxonomistIDProcessed
 
 #load ggplot2 and dplyr packages
 library(ggplot2)

@@ -114,3 +114,143 @@ ggplot(D1013_vitals, aes(x = date, y = specificConductance))+
   scale_color_manual(values = c("green4", "steelblue3", "orange3"))+
   labs(title = "D10/13 Specific Conducance", subtitle = "2012-2021", x = "Calendar Month", y = "Specific Conductance (spc)", fill = "Site Code")+
   scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
+
+###To export all these plots (and future ones), click "export" in the plots window, save as pdf, size = 5*7, click save. Navigate to file location to open.
+
+###Let's try and wrangle then plot alk
+d1013acid <- ARIK_swc$swc_domainLabData %>%
+  full_join(COMO_swc$swc_domainLabData) %>%
+  full_join(WLOU_swc$swc_domainLabData)
+
+head(d1013anc)
+
+#manipulate dates as before to just be in a month-day format, no year
+d1013acid_new_dates <- as.Date(d1013acid$collectDate, format = ("%m-%d"))
+date <- format(d1013anc_new_dates, format = ("%m-%d"))
+d1013acid_fin <- data.frame(d1013acid, date)
+d1013acid_fin$date <- paste0('2021-', d1013acid_fin$date)
+d1013acid_fin$date <- as.Date.character(d1013acid_fin$date)
+
+#choose only needed variables
+d1013alk <- d1013acid_fin %>%
+  select(siteID, collectDate, date, alkMgPerL) %>%
+  drop_na()
+
+#End wrangling, start plotting
+ggplot(d1013alk, aes(x = date, y = alkMgPerL))+
+  geom_point(aes(color = siteID), show.legend = FALSE)+
+  geom_smooth(aes(fill = siteID), color = "black")+
+  scale_fill_manual(values = c("green1", "steelblue1", "orange1"))+
+  scale_color_manual(values = c("green4", "steelblue3", "orange3"))+
+  labs(title = "D10/13 Alkalinity", subtitle = "2012-2021", x = "Calendar Month", y = "Alkalinity (mg/L)", fill = "Site Code")+
+  scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
+
+#Oof, looks like we have some outliers (data integrity issue). Will need to remove these.
+View(d1013alk)
+#Sorted on the alk column to see outliers, removed by row.
+d1013alk_clean <- d1013alk[-c(34, 385, 388),] 
+
+#Let's try plotting again
+ggplot(d1013alk_clean, aes(x = date, y = alkMgPerL))+
+  geom_point(aes(color = siteID), show.legend = FALSE)+
+  geom_smooth(aes(fill = siteID), color = "black")+
+  scale_fill_manual(values = c("green1", "steelblue1", "orange1"))+
+  scale_color_manual(values = c("green4", "steelblue3", "orange3"))+
+  labs(title = "D10/13 Alkalinity", subtitle = "2012-2021", x = "Calendar Month", y = "Alkalinity (mg/L)", fill = "Site Code")+
+  scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
+#Looks great! Export this plot.
+
+#####
+###Now how about cell counts?
+d1013_cc <- neonUtilities::loadByProduct(
+  dpID="DP1.20138.001",# The data product ID for surface water chemistry. this can be changed to any data product ID
+  check.size = F,# This input will force the function to download the data no matter the size of the download
+  site = c("ARIK", "COMO", "WLOU")# This is the site you specified above
+)
+
+d1013cc <- d1013_cc$amc_cellCounts
+
+#manipulate dates as before to just be in a month-day format, no year
+d1013cc_new_dates <- as.Date(d1013cc$collectDate, format = ("%m-%d"))
+date <- format(d1013cc_new_dates, format = ("%m-%d"))
+d1013cc_fin <- data.frame(d1013cc, date)
+d1013cc_fin$date <- paste0('2021-', d1013cc_fin$date)
+d1013cc_fin$date <- as.Date.character(d1013cc_fin$date)
+
+#choose only needed variables
+d1013cc <- d1013cc_fin %>%
+  select(siteID, collectDate, date, rawMicrobialAbundance) %>%
+  drop_na()
+
+ggplot(d1013cc, aes(x = date, y = rawMicrobialAbundance))+
+  geom_point(aes(color = siteID), show.legend = FALSE)+
+  geom_smooth(aes(fill = siteID), color = "black")+
+  scale_fill_manual(values = c("green1", "steelblue1", "orange1"))+
+  scale_color_manual(values = c("green4", "steelblue3", "orange3"))+
+  labs(title = "D10/13 Cell Counts", subtitle = "2012-2021", x = "Calendar Month", y = "Raw Microbial Abundance (n)", fill = "Site Code")+
+  scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
+###What a let down, this data is worthless.. I probably wouldn't show this plot. 
+#Not enough observations to make for a robust plot, note the large confidence intervals.
+#####
+
+
+###S1 and S2 sensor data? Turbidity, chlorophyll, pH. BIG DATA, be patient with R.
+d1013_wq <- neonUtilities::loadByProduct(
+  dpID="DP1.20288.001",# The data product ID for surface water chemistry. this can be changed to any data product ID
+  check.size = F,# This input will force the function to download the data no matter the size of the download
+  site = c("ARIK", "COMO", "WLOU"),
+  startdate = "2018-01"
+  )
+
+#subset list to only the dataset we want
+d1013wq <- d1013_wq$waq_instantaneous
+
+#want to keep variables of interest and QF indicators for filtering
+d1013wq2 <- d1013wq %>%
+  select(siteID, endDateTime, pH, pHFinalQF, turbidity, turbidityFinalQF, chlorophyll, chlorophyllFinalQF) %>%
+  drop_na()
+
+#subset to remove any observations with quality flagged data, which = "no good"
+d1013wq_QF_rm <- subset(d1013wq2, d1013wq2$pHFinalQF == 0 & d1013wq2$turbidityFinalQF == 0 & d1013wq2$chlorophyllFinalQF == 0)
+
+d1013wq_new_dates <- as.Date(d1013wq_QF_rm$endDateTime, format = ("%m-%d"))
+date <- format(d1013wq_new_dates, format = ("%m-%d"))
+d1013wq_fin <- data.frame(d1013wq_QF_rm, date)
+d1013wq_fin$date <- paste0('2021-', d1013wq_fin$date)
+d1013wq_fin$date <- as.Date.character(d1013wq_fin$date)
+
+#randomly subset the dataset to only 1000 observations so that R can process it and so the plot doesn't look so crazy
+d1013wq_sub <- sample_n(d1013wq_fin, 10000)
+
+#This plot is awesome in conjunction with the ALK data. More consistent pH at ARIK shows how it is "more resistant"
+#to changes in pH because of it's higher alkalinity, and thus higher buffering capacity against changes in pH. 
+#On the other hand, COMO has a huge amount of variation in pH. WLOU isn't quite as consistent as ARIK either.
+ggplot(d1013wq_sub, aes(x = date, y = pH))+
+  geom_point(aes(color = siteID), show.legend = FALSE)+
+  geom_smooth(aes(fill = siteID), color = "black")+
+  scale_fill_manual(values = c("green1", "steelblue1", "orange1"))+
+  scale_color_manual(values = c("green4", "steelblue3", "orange3"))+
+  labs(title = "D10/13 pH", subtitle = "2018-2021", x = "Calendar Month", y = "pH", fill = "Site Code")+
+  scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
+
+#Next one plotted on a log scale to account for huge chlorophyll measurements. 
+#Note that ARIK is pretty consistent throughout the year, while COMO and WLOU drop down...
+#to nearly 0 during winter months (almost 0 primary production when everything is frozen)
+ggplot(d1013wq_sub, aes(x = date, y = chlorophyll))+
+  geom_point(aes(color = siteID), show.legend = FALSE)+
+  geom_smooth(aes(fill = siteID), color = "black")+
+  scale_fill_manual(values = c("green1", "steelblue1", "orange1"))+
+  scale_color_manual(values = c("green4", "steelblue3", "orange3"))+
+  labs(title = "D10/13 Chlorophyll", subtitle = "2018-2021", x = "Calendar Month", y = "Chlorophyll (ug/L)", fill = "Site Code")+
+  scale_x_date(date_breaks = "1 month", labels = date_format("%b"))+
+  scale_y_log10()
+
+###This next plot just looks like a shotgun blast... got a data quality issue here, I think. I would not show.
+ggplot(d1013wq_sub, aes(x = date, y = turbidity))+
+  geom_point(aes(color = siteID), show.legend = FALSE)+
+  geom_smooth(aes(fill = siteID), color = "black")+
+  scale_fill_manual(values = c("green1", "steelblue1", "orange1"))+
+  scale_color_manual(values = c("green4", "steelblue3", "orange3"))+
+  labs(title = "D10/13 Turbidity", subtitle = "2018-2021", x = "Calendar Month", y = "Turbidity", fill = "Site Code")+
+  scale_x_date(date_breaks = "1 month", labels = date_format("%b"))+
+  scale_y_log10()

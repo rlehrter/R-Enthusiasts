@@ -157,7 +157,13 @@ WLOU_windrose <- WLOU_windrose_dirty +
   ggtitle("WLOU 7-Year Cumulative Windspeeds (30 min intervals)") +
   theme_minimal()
 
-#y-axis log10 transformation#
+#y-axis log10 transformation and save to your working directory#
+getwd() #this function will tell you where your working directory is
+#if it returns "NULL" or no WD, go to the Session tab and "Set Working Directory" to a convenient location
+
 ARIK_windrose + scale_y_log10()
+ggsave("ARIK_windrose.pdf", width = 10, height = 10)
 COMO_windrose + scale_y_log10()
+ggsave("COMO_windrose.pdf", width = 10, height = 10)
 WLOU_windrose + scale_y_log10()
+ggsave("WLOU_windrose.pdf", width = 10, height = 10)

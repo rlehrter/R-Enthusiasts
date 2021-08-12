@@ -96,6 +96,7 @@ ggplot(D1013_vitals, aes(x = date, y = waterTemp))+
   scale_color_manual(values = c("green4", "steelblue3", "orange3"))+
   labs(title = "D10/13 Water Temperatures", subtitle = "2012-2021", x = "Calendar Month", y = "Water Temperature (C)", fill = "Site Code")+
   scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
+ggsave("water_temp.pdf", width = 10, height = 8)
 
 #Dissolved Oxygen
 ggplot(D1013_vitals, aes(x = date, y = dissolvedOxygen))+
@@ -105,6 +106,7 @@ ggplot(D1013_vitals, aes(x = date, y = dissolvedOxygen))+
   scale_color_manual(values = c("green4", "steelblue3", "orange3"))+
   labs(title = "D10/13 Dissolved Oxygen", subtitle = "2012-2021", x = "Calendar Month", y = "Dissolved Oxygen (mg/L)", fill = "Site Code")+
   scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
+ggsave("dissolved_oxygen.pdf", width = 10, height = 8)
 
 #Specific Conductance
 ggplot(D1013_vitals, aes(x = date, y = specificConductance))+
@@ -114,8 +116,9 @@ ggplot(D1013_vitals, aes(x = date, y = specificConductance))+
   scale_color_manual(values = c("green4", "steelblue3", "orange3"))+
   labs(title = "D10/13 Specific Conducance", subtitle = "2012-2021", x = "Calendar Month", y = "Specific Conductance (spc)", fill = "Site Code")+
   scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
+ggsave("conductance.pdf", width = 10, height = 8)
 
-###To export all these plots (and future ones), click "export" in the plots window, save as pdf, size = 5*7, click save. Navigate to file location to open.
+###Plots have been exported to your working directory using ggsave(). Check it out!
 
 ###Let's try and wrangle then plot alk
 d1013acid <- ARIK_swc$swc_domainLabData %>%
@@ -159,6 +162,7 @@ ggplot(d1013alk_clean, aes(x = date, y = alkMgPerL))+
   labs(title = "D10/13 Alkalinity", subtitle = "2012-2021", x = "Calendar Month", y = "Alkalinity (mg/L)", fill = "Site Code")+
   scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
 #Looks great! Export this plot.
+ggsave("alkalinity.pdf", width = 10, height = 8)
 
 #####
 ###Now how about cell counts?
@@ -232,6 +236,7 @@ ggplot(d1013wq_sub, aes(x = date, y = pH))+
   scale_color_manual(values = c("green4", "steelblue3", "orange3"))+
   labs(title = "D10/13 pH", subtitle = "2018-2021", x = "Calendar Month", y = "pH", fill = "Site Code")+
   scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
+ggsave("pH.pdf", width = 10, height = 8)
 
 #Next one plotted on a log scale to account for huge chlorophyll measurements. 
 #Note that ARIK is pretty consistent throughout the year, while COMO and WLOU drop down...
@@ -244,6 +249,7 @@ ggplot(d1013wq_sub, aes(x = date, y = chlorophyll))+
   labs(title = "D10/13 Chlorophyll", subtitle = "2018-2021", x = "Calendar Month", y = "Chlorophyll (ug/L)", fill = "Site Code")+
   scale_x_date(date_breaks = "1 month", labels = date_format("%b"))+
   scale_y_log10()
+ggsave("chlorophyll.pdf", width = 10, height = 8)
 
 ###This next plot just looks like a shotgun blast... got a data quality issue here, I think. I would not show.
 ggplot(d1013wq_sub, aes(x = date, y = turbidity))+
@@ -254,3 +260,4 @@ ggplot(d1013wq_sub, aes(x = date, y = turbidity))+
   labs(title = "D10/13 Turbidity", subtitle = "2018-2021", x = "Calendar Month", y = "Turbidity", fill = "Site Code")+
   scale_x_date(date_breaks = "1 month", labels = date_format("%b"))+
   scale_y_log10()
+ggsave("turbidity.pdf", width = 10, height = 8)

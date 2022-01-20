@@ -1,4 +1,5 @@
 ###Script for plotting out sensor data from Hotchkiss CO2 Sensors###
+###RJLII
 
 ###GET THE DATA
 #First navigate to data location on your PC here: C:\Campbellsci\LoggerNet

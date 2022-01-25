@@ -6,6 +6,8 @@
 #Open the CR1000_Table1.dat (for S1) OR CR1000_2_Table2.dat (for S2) file
 #Save as, changing the suffix to a .csv and save to your working directory
 
+library(lubridate)
+
 ###LOAD THE DATA
 CO2_data <- read.csv("C:/Users/rlehrter/Desktop/R Working Directory/CR1000_2_Table1.csv")
 
@@ -16,14 +18,17 @@ View(CO2_data)
 
 #Get rid of the two rows (2 and 3) that we don't need
 CO2_data <- CO2_data[-c(2,3),]
-
 names(CO2_data) <- CO2_data[1,]
 CO2_data <- CO2_data[-1,]
 CO2_data <- CO2_data[,-c(7,8)]
-CO2_data$TIMESTAMP <- as.Date(CO2_data$TIMESTAMP)
+
+#New function, this turned out awesome! Get that lubridate cheat sheet
+CO2_data$DateHour <- floor_date(as.POSIXct(CO2_data$TIMESTAMP), unit = "hour") 
+CO2_data$DateHour <- as.POSIXct(CO2_data$DateHour)
 CO2_data$GP_CO2Conc <- as.numeric(CO2_data$GP_CO2Conc)
 str(CO2_data)
 View(CO2_data)
+
 #Looks good! Column names are where they are supposed to be, got rid of the silly stuff
 
 ###PLOT THE DATA
@@ -31,10 +36,16 @@ library(ggplot2)
 library(scales)
 library(dplyr)
 
-CO2_data <- CO2_data %>% group_by(TIMESTAMP) %>% summarize(mean(GP_CO2Conc))
-CO2_data$GP_CO2Conc <- CO2_data$`mean(GP_CO2Conc)`
+CO2_data_2 <- CO2_data %>%
+  group_by(DateHour) %>%
+  summarize(mean(GP_CO2Conc)) %>%
+  ungroup()
 
-ggplot(CO2_data, aes(x = TIMESTAMP, y = GP_CO2Conc))+
-  geom_line(show.legend = FALSE)+
-  geom_smooth(color="blue")+
-  scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
+CO2_data_3 <- rename(CO2_data_2, 'co2mean' = 'mean(GP_CO2Conc)')
+#CO2_data$GP_CO2Conc <- CO2_data$`mean(GP_CO2Conc)`
+
+ggplot(CO2_data_3, aes(x = DateHour, y = co2mean))+
+  geom_line(color = "dodgerblue")+
+  geom_smooth(color = "orange")+
+  theme_minimal()+
+  labs(x = "", y = "CO2 Concentration (ppm)", title = "CO2 Concentration at COMO S2 (Hotchkiss AA)")

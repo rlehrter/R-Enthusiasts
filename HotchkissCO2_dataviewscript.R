@@ -24,11 +24,11 @@ CO2_data <- CO2_data[,-c(7,8)]
 
 #New function, this turned out awesome! Get that lubridate cheat sheet
 CO2_data$DateHour <- floor_date(as.POSIXct(CO2_data$TIMESTAMP), unit = "hour") 
+
 CO2_data$DateHour <- as.POSIXct(CO2_data$DateHour)
 CO2_data$GP_CO2Conc <- as.numeric(CO2_data$GP_CO2Conc)
 str(CO2_data)
 View(CO2_data)
-
 #Looks good! Column names are where they are supposed to be, got rid of the silly stuff
 
 ###PLOT THE DATA
@@ -41,11 +41,12 @@ CO2_data_2 <- CO2_data %>%
   summarize(mean(GP_CO2Conc)) %>%
   ungroup()
 
-CO2_data_3 <- rename(CO2_data_2, 'co2mean' = 'mean(GP_CO2Conc)')
-#CO2_data$GP_CO2Conc <- CO2_data$`mean(GP_CO2Conc)`
+CO2_data_2$GP_CO2Conc <- CO2_data_2$`mean(GP_CO2Conc)`
 
-ggplot(CO2_data_3, aes(x = DateHour, y = co2mean))+
-  geom_line(color = "dodgerblue")+
-  geom_smooth(color = "orange")+
+ggplot(CO2_data_2, aes(x = DateHour, y = GP_CO2Conc))+
+  geom_line(color="dodgerblue1", size = 2)+
+  geom_line(color="dodgerblue2", size = 1.5)+
+  geom_line(color="dodgerblue3", size = 1)+
+  geom_smooth(color= "orange")+
   theme_minimal()+
   labs(x = "", y = "CO2 Concentration (ppm)", title = "CO2 Concentration at COMO S2 (Hotchkiss AA)")

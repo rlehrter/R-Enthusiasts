@@ -32,17 +32,16 @@ View(CO2_data)
 #Looks good! Column names are where they are supposed to be, got rid of the silly stuff
 
 ###PLOT THE DATA
-library(ggplot2)
-library(scales)
-library(dplyr)
-
+#But first summarize in a meaningful way (averaged over each hour in this case)
 CO2_data_2 <- CO2_data %>%
   group_by(DateHour) %>%
   summarize(mean(GP_CO2Conc)) %>%
   ungroup()
 
+#Rename the column just created or R will get very confused
 CO2_data_2$GP_CO2Conc <- CO2_data_2$`mean(GP_CO2Conc)`
 
+#Plot with extra lines for a fun glow effect
 ggplot(CO2_data_2, aes(x = DateHour, y = GP_CO2Conc))+
   geom_line(color="dodgerblue1", size = 2)+
   geom_line(color="dodgerblue2", size = 1.5)+

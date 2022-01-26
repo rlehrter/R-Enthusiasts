@@ -24,7 +24,6 @@ CO2_data <- CO2_data[,-c(7,8)]
 
 #New function, this turned out awesome! Get that lubridate cheat sheet
 CO2_data$DateHour <- floor_date(as.POSIXct(CO2_data$TIMESTAMP), unit = "hour") 
-
 CO2_data$DateHour <- as.POSIXct(CO2_data$DateHour)
 CO2_data$GP_CO2Conc <- as.numeric(CO2_data$GP_CO2Conc)
 str(CO2_data)
@@ -49,3 +48,18 @@ ggplot(CO2_data_2, aes(x = DateHour, y = GP_CO2Conc))+
   geom_smooth(color= "orange")+
   theme_minimal()+
   labs(x = "", y = "CO2 Concentration (ppm)", title = "CO2 Concentration at COMO S2 (Hotchkiss AA)")
+
+###Let's try an interactive plot with plotly
+library(plotly)
+
+CO2_dataplot <- plot_ly(CO2_data_2, x = ~DateHour, y = ~GP_CO2Conc, type = 'scatter', mode = 'lines')
+
+CO2_dataplot_clean <- CO2_dataplot %>% 
+  layout(title = "COMO Hourly Mean CO2 - Hotchkiss AA", 
+  xaxis = list(title = ""),
+  yaxis = list(title = "CO2 Concentration (ppm)"))
+
+CO2_dataplot_clean
+
+htmlwidgets::saveWidget(as_widget(CO2_dataplot_clean), "CO2_data.html")
+###Go to your working directory! Download the html and check out your new interactive plot

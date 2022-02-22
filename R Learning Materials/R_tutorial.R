@@ -109,7 +109,9 @@ site <- "ARIK"
 swc <- neonUtilities::loadByProduct(
   dpID="DP1.20093.001",# The data product ID for surface water chemistry. this can be changed to any data product ID
   check.size = F,# This input will force the function to download the data no matter the size of the download
-  site = site# This is the site you specified above
+  site = site, # This is the site you specified above
+  startdate = "2019-01",
+  enddate = "2019-12"
 )
 
 # Notice a new variable has appeared in the environment
@@ -119,6 +121,9 @@ str(swc)
 
 # This is what NEON data looks like in R before you subset it, or view it a different way (note the capital V)
 View(swc)
+#How to subset and view data
+View(swc$swc_fieldSuperParent)
+View(swc$swc_fieldSuperParent$waterTemp)
 # So, NEON data comes as a list of 8 different tables, 7 of which we won't need.
 
 
@@ -153,7 +158,7 @@ ARIK_final <- data.frame(ARIK_field_data_cut, new_dates)
 ggplot(ARIK_final, aes(x = new_dates, y = waterTemp))+
   geom_point()+
   geom_smooth()+
-  labs(title = "ARIK Water Temperature", subtitle = "5 Years of Data", x = "Date", y = "Water Temperature")+
+  labs(title = "ARIK Water Temperature", subtitle = "2019-2020", x = "Date", y = "Water Temperature")+
   scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
 #hot summer, cold winter
 
@@ -161,7 +166,7 @@ ggplot(ARIK_final, aes(x = new_dates, y = waterTemp))+
 ggplot(ARIK_final, aes(x = new_dates, y = dissolvedOxygen))+
   geom_point()+
   geom_smooth()+
-  labs(title = "ARIK Dissolved Oxygen", subtitle = "5 Years of Data", x = "Date", y = "Dissolved Oxygen")+
+  labs(title = "ARIK Dissolved Oxygen", subtitle = "2019-2020", x = "Date", y = "Dissolved Oxygen")+
   scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
 #mirrors stream metabolism- hottest months, highest stream metabolism, lowest stream O2
 
@@ -169,7 +174,7 @@ ggplot(ARIK_final, aes(x = new_dates, y = dissolvedOxygen))+
 ggplot(ARIK_final, aes(x = new_dates, y = specificConductance))+
   geom_point()+
   geom_smooth()+
-  labs(title = "ARIK Specific Conductance", subtitle = "5 Years of Data", x = "Date", y = "Specific Conductance")+
+  labs(title = "ARIK Specific Conductance", subtitle = "2019-2020", x = "Date", y = "Specific Conductance")+
   scale_x_date(date_breaks = "1 month", labels = date_format("%b"))
 #pretty consistent pattern with conductance- slightly higher in hot winter months where decreased water levels concentrate solutes
 
